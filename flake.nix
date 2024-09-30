@@ -3,7 +3,8 @@
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # golang 1.22.4 is not yet on unstable
+    nixpkgs.url = "github:NixOS/nixpkgs/staging";
   };
 
   outputs = {
@@ -13,23 +14,21 @@
   }:
     flake-utils.lib.eachDefaultSystem
     (system: let
-      overlays = [];
-
       # pkgs is an alias for the nixpkgs at the system level. This will be used
       # for general utilities.
       pkgs = import nixpkgs {
-        inherit system overlays;
+        inherit system;
       };
     in {
       defaultPackage = pkgs.buildGoModule rec {
         pname = "devbox";
-        version = "0.8.5";
+        version = "0.13.1";
 
         src = pkgs.fetchFromGitHub {
           owner = "jetpack-io";
           repo = pname;
           rev = version;
-          hash = "sha256-Vgke4CTVU5KW7iDyzk6P1ab5nOyICblvJtUQTISc2jg=";
+          hash = "sha256-dlZRxVUe9viHIuTK/E4zz2/iL0nxK4oT+Mhu6rIiKY0=";
         };
 
         ldflags = [
@@ -41,7 +40,7 @@
         # integration tests want file system access
         doCheck = false;
 
-        vendorHash = "sha256-rP3vktCfmUeZhc0DaU2osVryNabsnaWWyfFYFy7W1pc=";
+        vendorHash = "sha256-rwmNzYzmZqNcNVV4GgqCVLT6ofIkblVCMJHLGwlhcGw=";
 
         nativeBuildInputs = [pkgs.installShellFiles];
 
